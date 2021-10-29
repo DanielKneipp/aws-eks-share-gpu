@@ -2,39 +2,60 @@ data "aws_eks_cluster" "eks" {
   name = module.eks.cluster_id
 }
 
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks.cluster_id
-}
-
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.eks.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
+  exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+    command     = "aws"
+  }
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 17.22.0"
 
-  cluster_version = "1.21.2"
-  cluster_name    = "gpu"
+  cluster_version = "1.21"
+  cluster_name    = local.cluster_name
   vpc_id          = module.vpc.vpc_id
-  subnets         = tolist(module.vpc.private_subnets)
+  subnets         = module.vpc.private_subnets
 
-  worker_groups_launch_template = [
-    {
-      instance_type = "g4dn.xlarge"
-      ami_id        = "???"
+  write_kubeconfig = false
 
-      asg_max_size         = 2
-      asg_desired_capacity = 2
-      asg_min_size         = 2
-      suspended_processes  = ["AZRebalance"]
+  cluster_encryption_config = [{
+    provider_key_arn = aws_kms_key.cluster_secrets.arn
+    resources        = ["secrets"]
+  }]
 
-      root_encrypted   = true
-      root_volume_size = 50
+  cluster_endpoint_private_access                = true
+  cluster_create_endpoint_private_access_sg_rule = true
+  cluster_endpoint_private_access_cidrs          = module.vpc.private_subnets_cidr_blocks
 
-      kubelet_extra_args = "--node-labels=node.kubernetes.io/lifecycle=spot,k8s.amazonaws.com/accelerator=vgpu"
+
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = local.admin_ips
+
+  node_groups = {
+    gpu-ng = {
+      desired_capacity = 1
+      min_capacity     = 1
+      max_capacity     = 1
+
+      instance_types = ["g4dn.xlarge"]
+      capacity_type  = "ON_DEMAND"
+      ami_type       = "AL2_x86_64_GPU"
+
+      disk_size              = 50
+      disk_encrypted         = true
+      create_launch_template = true
+      disk_kms_key_id        = aws_kms_key.gpu_volume.arn
+
+      kubelet_extra_args = "--node-labels=k8s.amazonaws.com/accelerator=vgpu"
+
+      update_config = {
+        max_unavailable_percentage = 50
+      }
     }
-  ]
+  }
 }

@@ -2,13 +2,25 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.63"
+      version = "3.63"
     }
   }
 
-  required_version = "~> 1.0.3"
+  required_version = "= 1.0.10"
 }
 
 provider "aws" {
   region = "us-east-1"
+}
+
+locals {
+  cluster_name = "gpu"
+
+  admin_ips = [
+    "${chomp(data.http.myip.body)}/32",
+  ]
+}
+
+data "http" "myip" {
+  url = "http://ipv4.icanhazip.com"
 }
