@@ -44,7 +44,7 @@ module "eks" {
 
       instance_types = ["g4dn.xlarge"]
       capacity_type  = "ON_DEMAND"
-      ami_type       = "AL2_x86_64_GPU"
+      ami_id         = local.ami_id
 
       disk_size              = 50
       disk_encrypted         = true
@@ -54,7 +54,7 @@ module "eks" {
       kubelet_extra_args = "--node-labels=k8s.amazonaws.com/accelerator=vgpu"
 
       update_config = {
-        max_unavailable_percentage = 50
+        max_unavailable_percentage = 100 # For testing
       }
     }
   }

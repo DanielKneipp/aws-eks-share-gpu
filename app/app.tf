@@ -5,6 +5,16 @@ resource "kubernetes_deployment" "resnet_deployment" {
 
   wait_for_rollout = false
 
+  lifecycle {
+    ignore_changes = [
+      # Trying to ignore diff detect after creating the resource
+      # (https://github.com/hashicorp/terraform-provider-kubernetes/issues/1087)
+      # but this ignore also doesn't work at current versions
+      # TODO: report this
+      metadata[0].resource_version, # This keeps changing within the cluster
+    ]
+  }
+
   spec {
     replicas = 3
 
@@ -15,7 +25,7 @@ resource "kubernetes_deployment" "resnet_deployment" {
     }
 
     strategy {
-      type = "Recreate"
+      type = "Recreate" # For testing
     }
 
     template {
@@ -50,8 +60,8 @@ resource "kubernetes_deployment" "resnet_deployment" {
 
           resources {
             limits = {
-              cpu                      = "1024m"
-              memory                   = "4Gi"
+              cpu                      = "700m"
+              memory                   = "3Gi"
               "k8s.amazonaws.com/vgpu" = "8" # 48 * 0.2
             }
           }

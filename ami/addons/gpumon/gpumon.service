@@ -1,0 +1,15 @@
+[Unit]
+Description=Gpumon
+After=network.target
+StartLimitIntervalSec=10
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=root
+ExecStart=/usr/bin/env python -u /etc/gpumon.py
+
+[Install]
+WantedBy=multi-user.target

@@ -15,6 +15,7 @@ provider "aws" {
 
 locals {
   cluster_name = "gpu"
+  ami_id       = data.aws_ami.gpu.image_id
 
   admin_ips = [
     "${chomp(data.http.myip.body)}/32",
@@ -23,4 +24,14 @@ locals {
 
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
+}
+
+data "aws_ami" "gpu" {
+  most_recent = true
+  owners      = ["self"]
+
+  filter {
+    name   = "name"
+    values = ["packer-gpu-ami-*"]
+  }
 }

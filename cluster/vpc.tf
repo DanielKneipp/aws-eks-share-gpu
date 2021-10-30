@@ -5,6 +5,8 @@ module "vpc" {
   name = "eks-vpc"
   cidr = "10.0.0.0/16"
 
+  # Use this many AZs to test Spot instances availability in
+  # the future
   azs = [
     "us-east-1a",
     "us-east-1b",
@@ -33,6 +35,8 @@ module "vpc" {
   enable_dhcp_options              = true
   dhcp_options_domain_name_servers = ["AmazonProvidedDNS"]
 
+  # TODO: test if these are really required
+  # Source: https://github.com/hashicorp/learn-terraform-provision-eks-cluster/blob/master/vpc.tf#L34-L46
   tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }

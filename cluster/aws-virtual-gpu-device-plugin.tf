@@ -5,6 +5,16 @@ resource "kubernetes_daemonset" "aws_virtual_gpu_device_plugin_daemonset" {
     namespace = "kube-system"
   }
 
+  lifecycle {
+    ignore_changes = [
+      # Trying to ignore diff detect after creating the resource
+      # (https://github.com/hashicorp/terraform-provider-kubernetes/issues/1087)
+      # but this ignore also doesn't work at current versions
+      # TODO: report this
+      metadata[0].resource_version,
+    ]
+  }
+
   spec {
     selector {
       match_labels = {
@@ -58,7 +68,8 @@ resource "kubernetes_daemonset" "aws_virtual_gpu_device_plugin_daemonset" {
           name  = "aws-virtual-gpu-device-plugin-ctr"
           image = "amazon/aws-virtual-gpu-device-plugin:v0.1.0"
 
-          # Max number of mps clients is 48 for a turing architecture (https://docs.nvidia.com/deploy/mps/index.html#topic_3_3_5_1)
+          # Max number of mps clients is 48 for a turing architecture
+          # (https://docs.nvidia.com/deploy/mps/index.html#topic_3_3_5_1)
           args = ["/usr/bin/vgpu-device-plugin", "--vgpu=48"]
 
           volume_mount {
