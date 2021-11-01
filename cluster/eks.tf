@@ -5,6 +5,7 @@ data "aws_eks_cluster" "eks" {
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.eks.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+
   exec {
     api_version = "client.authentication.k8s.io/v1alpha1"
     args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
@@ -32,12 +33,11 @@ module "eks" {
   cluster_create_endpoint_private_access_sg_rule = true
   cluster_endpoint_private_access_cidrs          = module.vpc.private_subnets_cidr_blocks
 
-
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = local.admin_ips
 
   node_groups = {
-    gpu-ng = {
+    ng-gpu = {
       desired_capacity = 1
       min_capacity     = 1
       max_capacity     = 1

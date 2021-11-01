@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 locals {
-  cluster_name = "gpu"
+  cluster_name = "tf-eks"
 }
 
 data "aws_eks_cluster" "eks" {

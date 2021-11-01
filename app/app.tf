@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "resnet_deployment" {
             limits = {
               cpu                      = "700m"
               memory                   = "3Gi"
-              "k8s.amazonaws.com/vgpu" = "8" # 48 * 0.2
+              "k8s.amazonaws.com/vgpu" = "10" # 48 * 0.2
             }
           }
 

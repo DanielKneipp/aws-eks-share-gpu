@@ -2,7 +2,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.10"
 
-  name = "eks-vpc"
+  name = "tf-vpc"
   cidr = "10.0.0.0/16"
 
   # Use this many AZs to test Spot instances availability in
@@ -29,7 +29,8 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  # Requirement for private eks endpoint (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
+  # Requirement for private eks endpoint
+  # (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
   enable_dns_hostnames             = true
   enable_dns_support               = true
   enable_dhcp_options              = true

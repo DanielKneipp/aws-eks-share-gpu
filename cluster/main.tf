@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 locals {
-  cluster_name = "gpu"
+  cluster_name = "tf-eks"
   ami_id       = data.aws_ami.gpu.image_id
 
   admin_ips = [
