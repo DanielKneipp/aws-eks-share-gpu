@@ -26,12 +26,11 @@ The rest will come along in the next steps ;)
 
 At the end, you should have an infrastructure with the following features:
 
-[x] EKS cluster with encrypted volumes and secrets using KMS
-[x] All workers resides on private subnets and access the control plane
-only from within the VPC (no internet communication)
-[x] Ip whitelist configured for accessing the k8s api from the internet
-[x] Instrumented instances with GPU usage monitored in Cloudwatch
-[x] Nodes can be access with AWS SSM Session Manager (no `ssh` required).
+- [x] EKS cluster with encrypted volumes and secrets using KMS
+- [x] All workers resides on private subnets and access the control plane only from within the VPC (no internet communication)
+- [x] Ip whitelist configured for accessing the k8s api from the internet
+- [x] Instrumented instances with GPU usage monitored in Cloudwatch
+- [x] Nodes can be access with AWS SSM Session Manager (no `ssh` required).
 
 ### Installing the tooling
 
