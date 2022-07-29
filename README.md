@@ -64,6 +64,7 @@ The following commands will create an AMI named `packer-gpu-ami-0-1`, which shou
 
 ```
 cd ami/
+packer init gpu.pkr.hcl
 packer build .
 ```
 

@@ -2,4 +2,4 @@ pre-commit 2.15.0
 terraform 1.0.10
 tflint 0.33.0
 packer 1.7.8
-awscli 2.3.2
+awscli 2.7.19

@@ -54,7 +54,8 @@ module "eks" {
       kubelet_extra_args = "--node-labels=k8s.amazonaws.com/accelerator=vgpu"
 
       update_config = {
-        max_unavailable_percentage = 100 # For testing
+        # All nodes are updated at the same time when config is changed
+        max_unavailable_percentage = 100
       }
     }
   }
